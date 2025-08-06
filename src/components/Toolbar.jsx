@@ -3,7 +3,7 @@
 import React from "react";
 import { usePresentationStore } from "../store/store";
 
-const Toolbar = ({ sendWebSocketMessage, userNickname }) => {
+const Toolbar = ({ sendWebSocketMessage, userNickname, presentationId }) => {
   const { slides, currentSlide, updateSlideElements } = usePresentationStore();
 
   const handleAddTextBlock = () => {
@@ -64,6 +64,8 @@ const Toolbar = ({ sendWebSocketMessage, userNickname }) => {
         <span>
           Editing as: <strong>{userNickname}</strong>
         </span>
+        <br />
+        <span className="presentation-id">ID: {presentationId}</span>
       </div>
       <div className="toolbar-buttons">
         <button onClick={handleAddTextBlock}>Add Text Block</button>

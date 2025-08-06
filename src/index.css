@@ -140,3 +140,38 @@ body {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
   font-family: inherit;
 }
+.slide-canvas {
+  flex-grow: 1;
+  background-color: #f7f7f7;
+  position: relative; /* CRUCIAL: Makes it a positioning context for the draggable elements */
+  margin: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.text-element {
+  position: absolute;
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.text-element:hover {
+  border: 1px dashed #007bff;
+}
+
+.text-element .drag-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  cursor: grab;
+}
+
+.text-element .drag-handle:active {
+  cursor: grabbing;
+}

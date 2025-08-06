@@ -8,11 +8,11 @@ import SlideCanvas from "./SlideCanvas";
 import Toolbar from "./Toolbar";
 
 const Presentation = ({ presentationId, userNickname }) => {
-  // Change: Get setPresentationData from the store instead of setSlides
   const {
     slides,
     currentSlide,
     setPresentationData,
+    // Add updateSlideElements here
     updateSlideElements,
     setCurrentSlide,
   } = usePresentationStore();
@@ -47,7 +47,6 @@ const Presentation = ({ presentationId, userNickname }) => {
           `http://localhost:3000/api/presentations/${presentationId}`
         );
 
-        // Change: Use setPresentationData to set both the presentation and slides
         setPresentationData(response.data.presentation, response.data.slides);
 
         if (response.data.slides.length > 0) {
@@ -86,12 +85,15 @@ const Presentation = ({ presentationId, userNickname }) => {
       <Toolbar
         sendWebSocketMessage={sendWebSocketMessage}
         userNickname={userNickname}
+        presentationId={presentationId}
       />
       <div className="main-content">
         <SlidesList slides={slides} />
         <SlideCanvas
           slide={activeSlide}
           sendWebSocketMessage={sendWebSocketMessage}
+          // Pass updateSlideElements here
+          updateSlideElements={updateSlideElements}
         />
       </div>
     </div>
