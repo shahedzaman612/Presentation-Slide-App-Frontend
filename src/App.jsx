@@ -1,14 +1,32 @@
 // src/App.jsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Presentation from "./components/Presentation";
 import "./index.css";
 
 function App() {
-  const [nickname, setNickname] = useState("");
-  const [presentationId, setPresentationId] = useState("");
-  const [currentView, setCurrentView] = useState("welcome");
+  // Use a lazy initializer to load state from localStorage on initial render
+  const [nickname, setNickname] = useState(
+    () => localStorage.getItem("nickname") || ""
+  );
+  const [presentationId, setPresentationId] = useState(
+    () => localStorage.getItem("presentationId") || ""
+  );
+  const [currentView, setCurrentView] = useState(() =>
+    localStorage.getItem("presentationId") && localStorage.getItem("nickname")
+      ? "presentation"
+      : "welcome"
+  );
+
+  // Save nickname and presentationId to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("nickname", nickname);
+  }, [nickname]);
+
+  useEffect(() => {
+    localStorage.setItem("presentationId", presentationId);
+  }, [presentationId]);
 
   const handleCreatePresentation = async () => {
     if (!nickname) {

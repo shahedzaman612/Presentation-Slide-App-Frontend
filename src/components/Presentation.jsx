@@ -12,7 +12,6 @@ const Presentation = ({ presentationId, userNickname }) => {
     slides,
     currentSlide,
     setPresentationData,
-    // Add updateSlideElements here
     updateSlideElements,
     setCurrentSlide,
   } = usePresentationStore();
@@ -34,6 +33,9 @@ const Presentation = ({ presentationId, userNickname }) => {
           data.payload.slide._id,
           data.payload.slide.elements
         );
+      } else if (data.type === "ADD_SLIDE") {
+        // This is for when other users add a new slide
+        setPresentationData(data.payload.presentation, data.payload.slides);
       }
     };
 
@@ -88,11 +90,15 @@ const Presentation = ({ presentationId, userNickname }) => {
         presentationId={presentationId}
       />
       <div className="main-content">
-        <SlidesList slides={slides} />
+        {/* Pass the required props to SlidesList */}
+        <SlidesList
+          slides={slides}
+          presentationId={presentationId}
+          sendWebSocketMessage={sendWebSocketMessage}
+        />
         <SlideCanvas
           slide={activeSlide}
           sendWebSocketMessage={sendWebSocketMessage}
-          // Pass updateSlideElements here
           updateSlideElements={updateSlideElements}
         />
       </div>
