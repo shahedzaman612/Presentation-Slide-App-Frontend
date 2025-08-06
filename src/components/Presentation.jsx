@@ -59,7 +59,7 @@ const Presentation = ({ presentationId, userNickname, onExit }) => {
     const fetchPresentation = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/presentations/${presentationId}`
+          `https://presentation-slide-app-backend.onrender.com/api/presentations/${presentationId}`
         );
 
         setPresentationData(response.data.presentation, response.data.slides);
