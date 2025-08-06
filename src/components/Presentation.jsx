@@ -23,7 +23,7 @@ const Presentation = ({ presentationId, userNickname, onExit }) => {
 
   useEffect(() => {
     const newWs = new WebSocket(
-      "ws://presentation-slide-app-backend.onrender.com"
+      "wss://presentation-slide-app-backend.onrender.com"
     );
 
     newWs.onopen = () => {
