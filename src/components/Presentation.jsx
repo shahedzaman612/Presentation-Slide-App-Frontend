@@ -22,7 +22,9 @@ const Presentation = ({ presentationId, userNickname, onExit }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const newWs = new WebSocket("ws://localhost:3000");
+    const newWs = new WebSocket(
+      "ws:https://presentation-slide-app-backend.onrender.com"
+    );
 
     newWs.onopen = () => {
       console.log("WebSocket connected");
