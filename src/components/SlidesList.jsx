@@ -4,7 +4,8 @@ import React from "react";
 import { usePresentationStore } from "../store/store";
 
 const SlidesList = ({ slides, presentationId, sendWebSocketMessage }) => {
-  const { currentSlide, setCurrentSlide } = usePresentationStore();
+  const { currentSlide, setCurrentSlide, setPresentationData } =
+    usePresentationStore();
 
   const handleAddSlide = () => {
     const newSlideNumber =
@@ -20,6 +21,49 @@ const SlidesList = ({ slides, presentationId, sendWebSocketMessage }) => {
       type: "ADD_SLIDE",
       presentationId: presentationId,
       payload: { slide: newSlide },
+    };
+    sendWebSocketMessage(message);
+  };
+
+  const handleDeleteSlide = () => {
+    if (!currentSlide) {
+      alert("Please select a slide to delete.");
+      return;
+    }
+
+    const activeSlide = slides.find(
+      (slide) => slide.slideNumber === currentSlide
+    );
+    if (!activeSlide) {
+      console.error("Could not find the active slide in the state.");
+      return;
+    }
+
+    // Filter out the deleted slide from the local state
+    const newSlides = slides.filter(
+      (slide) => slide.slideNumber !== currentSlide
+    );
+
+    // Determine the next slide to display
+    let nextCurrentSlide = null;
+    if (newSlides.length > 0) {
+      const activeSlideIndex = slides.indexOf(activeSlide);
+      // Select the previous slide if it exists, otherwise select the first slide
+      nextCurrentSlide =
+        activeSlideIndex > 0
+          ? newSlides[activeSlideIndex - 1].slideNumber
+          : newSlides[0].slideNumber;
+    }
+
+    // Update local state immediately for a responsive UI
+    setPresentationData(null, newSlides); // Assuming null for presentation object
+    setCurrentSlide(nextCurrentSlide);
+
+    // Send a message to the server to delete the slide
+    const message = {
+      type: "DELETE_SLIDE",
+      presentationId: presentationId,
+      payload: { slideId: activeSlide._id },
     };
     sendWebSocketMessage(message);
   };
@@ -41,12 +85,21 @@ const SlidesList = ({ slides, presentationId, sendWebSocketMessage }) => {
             </button>
           ))
         ) : (
-          <p className="text-muted text-center py-2">No slides found.</p>
+          <p className="p-3 text-muted text-center">No slides found.</p>
         )}
       </div>
-      <button onClick={handleAddSlide} className="btn btn-primary mt-3">
-        Add New Slide
-      </button>
+      <div className="d-grid gap-2 mt-3">
+        <button onClick={handleAddSlide} className="btn btn-primary">
+          Add New Slide
+        </button>
+        <button
+          onClick={handleDeleteSlide}
+          className="btn btn-danger"
+          disabled={!currentSlide}
+        >
+          Delete Slide
+        </button>
+      </div>
     </div>
   );
 };

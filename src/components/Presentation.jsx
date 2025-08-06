@@ -22,8 +22,8 @@ const Presentation = ({ presentationId, userNickname, onExit }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // ... (WebSocket and fetch logic remains the same)
     const newWs = new WebSocket("ws://localhost:3000");
+
     newWs.onopen = () => {
       console.log("WebSocket connected");
       const message = {
@@ -42,9 +42,13 @@ const Presentation = ({ presentationId, userNickname, onExit }) => {
           data.payload.slide.elements
         );
       } else if (data.type === "ADD_SLIDE") {
+        // The server's ADD_SLIDE now broadcasts the entire slide list.
         setPresentationData(data.payload.presentation, data.payload.slides);
       } else if (data.type === "UPDATE_USERS") {
         setUsers(data.payload.users);
+      } else if (data.type === "UPDATE_SLIDES") {
+        // NEW: Handle the updated slides list from the server
+        setPresentationData(null, data.payload.slides);
       }
     };
 
