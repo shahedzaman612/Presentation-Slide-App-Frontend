@@ -4,7 +4,13 @@ import React from "react";
 import { usePresentationStore } from "../store/store";
 
 const Toolbar = ({ sendWebSocketMessage, userNickname, presentationId }) => {
-  const { slides, currentSlide, updateSlideElements } = usePresentationStore();
+  const {
+    slides,
+    currentSlide,
+    updateSlideElements,
+    selectedElementId,
+    setSelectedElementId,
+  } = usePresentationStore();
 
   const handleAddTextBlock = () => {
     // Check if a slide is currently selected
@@ -58,6 +64,44 @@ const Toolbar = ({ sendWebSocketMessage, userNickname, presentationId }) => {
     sendWebSocketMessage(message);
   };
 
+  // New handler for deleting an element
+  const handleDeleteElement = () => {
+    if (!selectedElementId) {
+      alert("Please select an element to delete.");
+      return;
+    }
+
+    const activeSlide = slides.find(
+      (slide) => slide.slideNumber === currentSlide
+    );
+    if (!activeSlide) {
+      console.error("Could not find the active slide in the state.");
+      return;
+    }
+
+    // Filter out the selected element
+    const updatedElements = activeSlide.elements.filter(
+      (element) => element.id !== selectedElementId
+    );
+
+    // Update local state and deselect the element
+    updateSlideElements(activeSlide._id, updatedElements);
+    setSelectedElementId(null);
+
+    // Send the updated slide to the server via WebSocket
+    const message = {
+      type: "DELETE_ELEMENT",
+      presentationId: activeSlide.presentationId,
+      payload: {
+        slide: {
+          ...activeSlide,
+          elements: updatedElements,
+        },
+      },
+    };
+    sendWebSocketMessage(message);
+  };
+
   return (
     <div className="top-bar">
       <div className="user-info">
@@ -69,6 +113,9 @@ const Toolbar = ({ sendWebSocketMessage, userNickname, presentationId }) => {
       </div>
       <div className="toolbar-buttons">
         <button onClick={handleAddTextBlock}>Add Text Block</button>
+        <button onClick={handleDeleteElement} disabled={!selectedElementId}>
+          Delete Element
+        </button>
         <button disabled>Add Shape (TODO)</button>
         <button disabled>Add Image (TODO)</button>
       </div>

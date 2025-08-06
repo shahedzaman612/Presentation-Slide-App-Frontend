@@ -8,39 +8,30 @@ export const usePresentationStore = create((set) => ({
   slides: [],
   currentSlide: 1,
   user: null,
-  sendWebSocketMessage: () => {}, // Placeholder for the WebSocket send function
+  selectedElementId: null, // Ensure this state exists
+  sendWebSocketMessage: () => {},
 
   // Actions to update the state
   setPresentationData: (presentation, slides) =>
     set({
       presentation,
       slides,
+      selectedElementId: null,
     }),
 
   setUser: (nickname, role) => set({ user: { nickname, role } }),
 
-  setCurrentSlide: (slideNumber) => set({ currentSlide: slideNumber }),
+  setCurrentSlide: (slideNumber) =>
+    set({
+      currentSlide: slideNumber,
+      selectedElementId: null,
+    }),
 
-  // --- Real-Time Actions ---
-
-  addSlide: (newSlide) =>
-    set((state) => ({
-      slides: [...state.slides, newSlide].sort(
-        (a, b) => a.slideNumber - b.slideNumber
-      ),
-    })),
-
-  removeSlide: (slideId) =>
-    set((state) => ({
-      slides: state.slides.filter((slide) => slide._id !== slideId),
-    })),
+  // Ensure this action exists
+  setSelectedElementId: (id) => set({ selectedElementId: id }),
 
   // A direct action to update a slide's entire elements array.
   updateSlideElements: (slideId, newElements) => {
-    console.log(
-      `Zustand: Updating slide ${slideId} with new elements.`,
-      newElements
-    );
     set((state) => ({
       slides: state.slides.map((slide) =>
         slide._id === slideId ? { ...slide, elements: newElements } : slide

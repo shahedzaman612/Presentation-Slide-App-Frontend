@@ -4,57 +4,56 @@ import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { usePresentationStore } from "../store/store";
 
-const TextElement = ({
-  element,
-  sendWebSocketMessage,
-  updateSlideElements,
-}) => {
+const TextElement = ({ element, sendWebSocketMessage, slide }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(element.content);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  const { slides, currentSlide } = usePresentationStore();
+  const { selectedElementId, setSelectedElementId, updateSlideElements } = usePresentationStore();
 
-  const handleDoubleClick = () => {
+  const handleDoubleClick = (e) => {
+    e.stopPropagation();
     setIsEditing(true);
   };
 
   const handleBlur = () => {
+    setIsEditing(false);
     if (element.content !== content) {
-      const activeSlide = slides.find(
-        (slide) => slide.slideNumber === currentSlide
-      );
-      if (!activeSlide) return;
-
-      const updatedElements = activeSlide.elements.map((el) => {
+      const updatedElements = slide.elements.map((el) => {
         if (el.id === element.id) {
           return { ...el, content: content };
         }
         return el;
       });
 
-      updateSlideElements(activeSlide._id, updatedElements);
+      updateSlideElements(slide._id, updatedElements);
 
       const message = {
         type: "UPDATE_ELEMENT",
-        presentationId: activeSlide.presentationId,
+        presentationId: slide.presentationId,
         payload: {
           slide: {
-            ...activeSlide,
+            ...slide,
             elements: updatedElements,
           },
         },
       };
       sendWebSocketMessage(message);
     }
-    setIsEditing(false);
+  };
+  
+  const handleClick = (e) => {
+    e.stopPropagation();
+    setSelectedElementId(element.id);
   };
 
   const handleMouseDown = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
     setDragStart({ x: e.clientX, y: e.clientY });
+    setSelectedElementId(element.id);
   };
 
   const handleMouseMove = (e) => {
@@ -66,20 +65,14 @@ const TextElement = ({
     const newX = element.x + dx;
     const newY = element.y + dy;
 
-    // Update position in local state
-    const activeSlide = slides.find(
-      (slide) => slide.slideNumber === currentSlide
-    );
-    if (!activeSlide) return;
-
-    const updatedElements = activeSlide.elements.map((el) => {
+    const updatedElements = slide.elements.map((el) => {
       if (el.id === element.id) {
         return { ...el, x: newX, y: newY };
       }
       return el;
     });
-    updateSlideElements(activeSlide._id, updatedElements);
 
+    updateSlideElements(slide._id, updatedElements);
     setDragStart({ x: e.clientX, y: e.clientY });
   };
 
@@ -87,19 +80,16 @@ const TextElement = ({
     if (!isDragging) return;
     setIsDragging(false);
 
-    // Send final position to the server
-    const activeSlide = slides.find(
-      (slide) => slide.slideNumber === currentSlide
-    );
-    if (!activeSlide) return;
+    const latestSlide = usePresentationStore.getState().slides.find(s => s._id === slide._id);
+    if (!latestSlide) return;
 
     const message = {
       type: "UPDATE_ELEMENT",
-      presentationId: activeSlide.presentationId,
+      presentationId: latestSlide.presentationId,
       payload: {
         slide: {
-          ...activeSlide,
-          elements: activeSlide.elements,
+          ...latestSlide,
+          elements: latestSlide.elements,
         },
       },
     };
@@ -109,6 +99,7 @@ const TextElement = ({
   if (isEditing) {
     return (
       <textarea
+        className="text-element editing"
         style={{
           position: "absolute",
           left: element.x,
@@ -126,7 +117,7 @@ const TextElement = ({
 
   return (
     <div
-      className="text-element"
+      className={`text-element ${selectedElementId === element.id ? 'selected' : ''}`}
       style={{
         position: "absolute",
         left: element.x,
@@ -135,6 +126,7 @@ const TextElement = ({
         height: element.height,
       }}
       onDoubleClick={handleDoubleClick}
+      onClick={handleClick}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

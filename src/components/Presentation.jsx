@@ -1,6 +1,6 @@
 // src/components/Presentation.jsx
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { usePresentationStore } from "../store/store";
 import SlidesList from "./SlidesList";
@@ -18,11 +18,18 @@ const Presentation = ({ presentationId, userNickname }) => {
   const sendWebSocketMessage =
     usePresentationStore.getState().sendWebSocketMessage;
 
+  const [users, setUsers] = useState([]); // New state for the user list
+
   useEffect(() => {
     const newWs = new WebSocket("ws://localhost:3000");
     newWs.onopen = () => {
       console.log("WebSocket connected");
-      const message = { type: "JOIN_PRESENTATION", presentationId };
+      // Send the userNickname with the join message
+      const message = {
+        type: "JOIN_PRESENTATION",
+        presentationId,
+        payload: { userNickname },
+      };
       newWs.send(JSON.stringify(message));
     };
 
@@ -34,8 +41,10 @@ const Presentation = ({ presentationId, userNickname }) => {
           data.payload.slide.elements
         );
       } else if (data.type === "ADD_SLIDE") {
-        // This is for when other users add a new slide
         setPresentationData(data.payload.presentation, data.payload.slides);
+      } else if (data.type === "UPDATE_USERS") {
+        // Handle the updated user list
+        setUsers(data.payload.users);
       }
     };
 
@@ -73,6 +82,7 @@ const Presentation = ({ presentationId, userNickname }) => {
     };
   }, [
     presentationId,
+    userNickname,
     setPresentationData,
     updateSlideElements,
     setCurrentSlide,
@@ -90,11 +100,11 @@ const Presentation = ({ presentationId, userNickname }) => {
         presentationId={presentationId}
       />
       <div className="main-content">
-        {/* Pass the required props to SlidesList */}
         <SlidesList
           slides={slides}
           presentationId={presentationId}
           sendWebSocketMessage={sendWebSocketMessage}
+          users={users} // Pass the users list as a prop
         />
         <SlideCanvas
           slide={activeSlide}
