@@ -34,7 +34,7 @@ function App() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/presentations",
+        "https://presentation-slide-app-backend.onrender.com/api/presentations",
         {
           name: `${nickname}'s Presentation`,
           creatorId: nickname,
