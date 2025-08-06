@@ -3,7 +3,12 @@
 import React from "react";
 import { usePresentationStore } from "../store/store";
 
-const Toolbar = ({ sendWebSocketMessage, userNickname, presentationId }) => {
+const Toolbar = ({
+  sendWebSocketMessage,
+  userNickname,
+  presentationId,
+  onExit,
+}) => {
   const {
     slides,
     currentSlide,
@@ -119,6 +124,9 @@ const Toolbar = ({ sendWebSocketMessage, userNickname, presentationId }) => {
         <button disabled>Add Shape (TODO)</button>
         <button disabled>Add Image (TODO)</button>
       </div>
+      <button className="exit-button" onClick={onExit}>
+        Exit Presentation
+      </button>
     </div>
   );
 };

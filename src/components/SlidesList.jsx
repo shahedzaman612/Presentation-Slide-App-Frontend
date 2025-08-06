@@ -46,12 +46,6 @@ const SlidesList = ({ slides, presentationId, sendWebSocketMessage }) => {
       <button onClick={handleAddSlide} className="add-slide-btn">
         Add New Slide
       </button>
-
-      <h3>Users</h3>
-      {/* The `users` list is a stretch goal, so we'll show a placeholder for now. */}
-      <ul>
-        <li>(creator)</li>
-      </ul>
     </div>
   );
 };

@@ -6,8 +6,9 @@ import { usePresentationStore } from "../store/store";
 import SlidesList from "./SlidesList";
 import SlideCanvas from "./SlideCanvas";
 import Toolbar from "./Toolbar";
+import UserPanel from "./UserPanel";
 
-const Presentation = ({ presentationId, userNickname }) => {
+const Presentation = ({ presentationId, userNickname, onExit }) => {
   const {
     slides,
     currentSlide,
@@ -18,13 +19,13 @@ const Presentation = ({ presentationId, userNickname }) => {
   const sendWebSocketMessage =
     usePresentationStore.getState().sendWebSocketMessage;
 
-  const [users, setUsers] = useState([]); // New state for the user list
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
+    // ... (WebSocket and fetch logic remains the same)
     const newWs = new WebSocket("ws://localhost:3000");
     newWs.onopen = () => {
       console.log("WebSocket connected");
-      // Send the userNickname with the join message
       const message = {
         type: "JOIN_PRESENTATION",
         presentationId,
@@ -43,7 +44,6 @@ const Presentation = ({ presentationId, userNickname }) => {
       } else if (data.type === "ADD_SLIDE") {
         setPresentationData(data.payload.presentation, data.payload.slides);
       } else if (data.type === "UPDATE_USERS") {
-        // Handle the updated user list
         setUsers(data.payload.users);
       }
     };
@@ -86,6 +86,7 @@ const Presentation = ({ presentationId, userNickname }) => {
     setPresentationData,
     updateSlideElements,
     setCurrentSlide,
+    setUsers,
   ]);
 
   const activeSlide = slides.find(
@@ -98,13 +99,15 @@ const Presentation = ({ presentationId, userNickname }) => {
         sendWebSocketMessage={sendWebSocketMessage}
         userNickname={userNickname}
         presentationId={presentationId}
+        slides={slides}
+        onExit={onExit} // Pass the onExit prop to the Toolbar
       />
       <div className="main-content">
         <SlidesList
           slides={slides}
           presentationId={presentationId}
           sendWebSocketMessage={sendWebSocketMessage}
-          users={users} // Pass the users list as a prop
+          users={users}
         />
         <SlideCanvas
           slide={activeSlide}
@@ -112,6 +115,7 @@ const Presentation = ({ presentationId, userNickname }) => {
           updateSlideElements={updateSlideElements}
         />
       </div>
+      <UserPanel users={users} />
     </div>
   );
 };

@@ -6,7 +6,6 @@ import Presentation from "./components/Presentation";
 import "./index.css";
 
 function App() {
-  // Use a lazy initializer to load state from localStorage on initial render
   const [nickname, setNickname] = useState(
     () => localStorage.getItem("nickname") || ""
   );
@@ -19,7 +18,6 @@ function App() {
       : "welcome"
   );
 
-  // Save nickname and presentationId to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("nickname", nickname);
   }, [nickname]);
@@ -60,6 +58,13 @@ function App() {
     setCurrentView("presentation");
   };
 
+  // NEW: This function resets the state to exit the presentation view
+  const handleExitPresentation = () => {
+    setPresentationId(""); // Clear the presentation ID
+    localStorage.removeItem("presentationId"); // Also clear it from local storage
+    setCurrentView("welcome"); // Navigate back to the welcome screen
+  };
+
   if (currentView === "welcome") {
     return (
       <div className="welcome-container">
@@ -93,7 +98,11 @@ function App() {
   }
 
   return (
-    <Presentation presentationId={presentationId} userNickname={nickname} />
+    <Presentation
+      presentationId={presentationId}
+      userNickname={nickname}
+      onExit={handleExitPresentation} // NEW: Pass the exit handler as a prop
+    />
   );
 }
 
