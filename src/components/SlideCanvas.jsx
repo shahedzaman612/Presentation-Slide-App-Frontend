@@ -9,8 +9,8 @@ const SlideCanvas = ({ slide, sendWebSocketMessage, updateSlideElements }) => {
 
   if (!slide) {
     return (
-      <div className="slide-canvas">
-        <p>No slide selected.</p>
+      <div className="flex-grow-1 bg-white border shadow-sm p-4">
+        <p className="text-center text-muted">No slide selected.</p>
       </div>
     );
   }
@@ -20,15 +20,19 @@ const SlideCanvas = ({ slide, sendWebSocketMessage, updateSlideElements }) => {
   };
 
   return (
-    <div className="slide-canvas" onClick={handleCanvasClick}>
+    <div
+      className="bg-white border shadow-sm position-relative h-100 w-100"
+      onClick={handleCanvasClick}
+    >
       {slide.elements.map((element) => (
-        <div key={element.id} className="element-container">
+        // No custom classes needed here, as the element's position is handled by inline styles
+        <div key={element.id}>
           {element.type === "text" && (
             <TextElement
               element={element}
               sendWebSocketMessage={sendWebSocketMessage}
               updateSlideElements={updateSlideElements}
-              slide={slide} // Pass the slide prop here
+              slide={slide}
             />
           )}
         </div>

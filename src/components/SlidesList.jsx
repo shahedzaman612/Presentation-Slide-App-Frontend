@@ -7,7 +7,6 @@ const SlidesList = ({ slides, presentationId, sendWebSocketMessage }) => {
   const { currentSlide, setCurrentSlide } = usePresentationStore();
 
   const handleAddSlide = () => {
-    // Determine the number for the new slide. If no slides exist, start with 1.
     const newSlideNumber =
       slides.length > 0 ? Math.max(...slides.map((s) => s.slideNumber)) + 1 : 1;
 
@@ -26,24 +25,26 @@ const SlidesList = ({ slides, presentationId, sendWebSocketMessage }) => {
   };
 
   return (
-    <div className="slides-list">
-      <h3>Slides</h3>
-      {slides && slides.length > 0 ? (
-        slides.map((slide) => (
-          <div
-            key={slide._id}
-            className={`slide-item ${
-              slide.slideNumber === currentSlide ? "active" : ""
-            }`}
-            onClick={() => setCurrentSlide(slide.slideNumber)}
-          >
-            Slide {slide.slideNumber}
-          </div>
-        ))
-      ) : (
-        <p>No slides found.</p>
-      )}
-      <button onClick={handleAddSlide} className="add-slide-btn">
+    <div className="card shadow-sm p-3">
+      <h5 className="card-title">Slides</h5>
+      <div className="list-group list-group-flush">
+        {slides && slides.length > 0 ? (
+          slides.map((slide) => (
+            <button
+              key={slide._id}
+              className={`list-group-item list-group-item-action ${
+                slide.slideNumber === currentSlide ? "active" : ""
+              }`}
+              onClick={() => setCurrentSlide(slide.slideNumber)}
+            >
+              Slide {slide.slideNumber}
+            </button>
+          ))
+        ) : (
+          <p className="text-muted text-center py-2">No slides found.</p>
+        )}
+      </div>
+      <button onClick={handleAddSlide} className="btn btn-primary mt-3">
         Add New Slide
       </button>
     </div>

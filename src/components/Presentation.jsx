@@ -94,28 +94,30 @@ const Presentation = ({ presentationId, userNickname, onExit }) => {
   );
 
   return (
-    <div className="presentation-container">
+    <div className="container-fluid d-flex flex-column vh-100 p-0">
       <Toolbar
         sendWebSocketMessage={sendWebSocketMessage}
         userNickname={userNickname}
         presentationId={presentationId}
         slides={slides}
-        onExit={onExit} // Pass the onExit prop to the Toolbar
+        onExit={onExit}
       />
-      <div className="main-content">
+      <div className="flex-grow-1 d-flex">
         <SlidesList
           slides={slides}
           presentationId={presentationId}
           sendWebSocketMessage={sendWebSocketMessage}
           users={users}
         />
-        <SlideCanvas
-          slide={activeSlide}
-          sendWebSocketMessage={sendWebSocketMessage}
-          updateSlideElements={updateSlideElements}
-        />
+        <div className="flex-grow-1 p-3 bg-light">
+          <SlideCanvas
+            slide={activeSlide}
+            sendWebSocketMessage={sendWebSocketMessage}
+            updateSlideElements={updateSlideElements}
+          />
+        </div>
+        <UserPanel users={users} />
       </div>
-      <UserPanel users={users} />
     </div>
   );
 };

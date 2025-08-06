@@ -80,7 +80,7 @@ const Toolbar = ({
       (slide) => slide.slideNumber === currentSlide
     );
     if (!activeSlide) {
-      console.error("Could not find the active slide in the state.");
+      console.t("Could not find the active slide in the state.");
       return;
     }
 
@@ -108,26 +108,43 @@ const Toolbar = ({
   };
 
   return (
-    <div className="top-bar">
-      <div className="user-info">
-        <span>
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <div className="container-fluid">
+        <span className="navbar-brand">
           Editing as: <strong>{userNickname}</strong>
         </span>
-        <br />
-        <span className="presentation-id">ID: {presentationId}</span>
+        <span className="navbar-text ms-3">ID: {presentationId}</span>
+
+        <div className="d-flex ms-auto">
+          <div className="btn-group me-2" role="group">
+            <button
+              className="btn btn-outline-primary"
+              onClick={handleAddTextBlock}
+            >
+              Add Text Block
+            </button>
+            <button
+              className="btn btn-outline-danger"
+              onClick={handleDeleteElement}
+              disabled={!selectedElementId}
+            >
+              Delete Element
+            </button>
+          </div>
+          <div className="btn-group me-2" role="group">
+            <button className="btn btn-outline-secondary" disabled>
+              Add Shape (TODO)
+            </button>
+            <button className="btn btn-outline-secondary" disabled>
+              Add Image (TODO)
+            </button>
+          </div>
+          <button className="btn btn-outline-dark" onClick={onExit}>
+            Exit Presentation
+          </button>
+        </div>
       </div>
-      <div className="toolbar-buttons">
-        <button onClick={handleAddTextBlock}>Add Text Block</button>
-        <button onClick={handleDeleteElement} disabled={!selectedElementId}>
-          Delete Element
-        </button>
-        <button disabled>Add Shape (TODO)</button>
-        <button disabled>Add Image (TODO)</button>
-      </div>
-      <button className="exit-button" onClick={onExit}>
-        Exit Presentation
-      </button>
-    </div>
+    </nav>
   );
 };
 

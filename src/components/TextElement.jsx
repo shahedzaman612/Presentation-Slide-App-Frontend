@@ -10,7 +10,8 @@ const TextElement = ({ element, sendWebSocketMessage, slide }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  const { selectedElementId, setSelectedElementId, updateSlideElements } = usePresentationStore();
+  const { selectedElementId, setSelectedElementId, updateSlideElements } =
+    usePresentationStore();
 
   const handleDoubleClick = (e) => {
     e.stopPropagation();
@@ -42,7 +43,7 @@ const TextElement = ({ element, sendWebSocketMessage, slide }) => {
       sendWebSocketMessage(message);
     }
   };
-  
+
   const handleClick = (e) => {
     e.stopPropagation();
     setSelectedElementId(element.id);
@@ -80,7 +81,9 @@ const TextElement = ({ element, sendWebSocketMessage, slide }) => {
     if (!isDragging) return;
     setIsDragging(false);
 
-    const latestSlide = usePresentationStore.getState().slides.find(s => s._id === slide._id);
+    const latestSlide = usePresentationStore
+      .getState()
+      .slides.find((s) => s._id === slide._id);
     if (!latestSlide) return;
 
     const message = {
@@ -99,13 +102,14 @@ const TextElement = ({ element, sendWebSocketMessage, slide }) => {
   if (isEditing) {
     return (
       <textarea
-        className="text-element editing"
+        className="form-control" // Bootstrap class for form inputs
         style={{
           position: "absolute",
           left: element.x,
           top: element.y,
           width: element.width,
           height: element.height,
+          resize: "none", // Prevent resizing to maintain layout
         }}
         value={content}
         onChange={(e) => setContent(e.target.value)}
@@ -115,9 +119,11 @@ const TextElement = ({ element, sendWebSocketMessage, slide }) => {
     );
   }
 
+  const isSelected = selectedElementId === element.id;
+
   return (
     <div
-      className={`text-element ${selectedElementId === element.id ? 'selected' : ''}`}
+      className={`p-2 bg-light ${isSelected ? "border border-primary" : ""}`} // Bootstrap classes for styling
       style={{
         position: "absolute",
         left: element.x,

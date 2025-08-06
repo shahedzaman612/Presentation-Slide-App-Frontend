@@ -58,40 +58,51 @@ function App() {
     setCurrentView("presentation");
   };
 
-  // NEW: This function resets the state to exit the presentation view
   const handleExitPresentation = () => {
-    setPresentationId(""); // Clear the presentation ID
-    localStorage.removeItem("presentationId"); // Also clear it from local storage
-    setCurrentView("welcome"); // Navigate back to the welcome screen
+    setPresentationId("");
+    localStorage.removeItem("presentationId");
+    setCurrentView("welcome");
   };
 
   if (currentView === "welcome") {
     return (
-      <div className="welcome-container">
-        <h1>Collaborative Presentations</h1>
-        <div className="input-group">
-          <input
-            type="text"
-            placeholder="Enter your nickname"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-          />
-        </div>
-        <div className="input-group">
-          <input
-            type="text"
-            placeholder="Enter presentation ID to join"
-            value={presentationId}
-            onChange={(e) => setPresentationId(e.target.value)}
-          />
-        </div>
-        <div className="button-group">
-          <button onClick={handleCreatePresentation}>
-            Create New Presentation
-          </button>
-          <button onClick={handleJoinPresentation}>
-            Join Existing Presentation
-          </button>
+      <div className="container d-flex justify-content-center align-items-center vh-100">
+        <div className="card shadow p-4" style={{ width: "24rem" }}>
+          <h1 className="card-title text-center mb-4">
+            Collaborative Presentations
+          </h1>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter your nickname"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter presentation ID to join"
+              value={presentationId}
+              onChange={(e) => setPresentationId(e.target.value)}
+            />
+          </div>
+          <div className="d-grid gap-2">
+            <button
+              className="btn btn-primary"
+              onClick={handleCreatePresentation}
+            >
+              Create New Presentation
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={handleJoinPresentation}
+            >
+              Join Existing Presentation
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -101,7 +112,7 @@ function App() {
     <Presentation
       presentationId={presentationId}
       userNickname={nickname}
-      onExit={handleExitPresentation} // NEW: Pass the exit handler as a prop
+      onExit={handleExitPresentation}
     />
   );
 }
